@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import firebase from 'firebase';
 import './App.css';
+import FileUpload from './FileUpload';
+import firebase from 'firebase';
 
 class App extends Component {
   constructor() {
@@ -8,13 +9,10 @@ class App extends Component {
     this.state = {
       user: null
     }
-
-    this.handleAuth = this.handleAuth.bind(this);
-    this.handleLogOut = this.handleLogOut.bind(this);
   }
 
-  componentWillMount(){
-    firebase.auth().onAuthStateChanged(user => { //onAuthStateChange me devuelve un objeto user
+  componentWillMount() {
+    firebase.auth().onAuthStateChanged(user => {
       this.setState({
         user: user
       })
@@ -24,33 +22,32 @@ class App extends Component {
   handleAuth() {
     const provider = new firebase.auth.GoogleAuthProvider();
     firebase.auth().signInWithPopup(provider)
-      .then(result => console.log(`${result.user.email} ha iniciado sesion`))
-      .catch(error => console.log(`Ha ocurrido un error: ${error.code}:${error.message}`));
+      .then(result => { console.log(`Logeado correctamente el user: ${result.user.email}`) })
+      .catch(error => { console.log(`Error:  ${error.code} : ${error.message}`) })
   }
 
-  handleLogOut(){
-    firebase.auth().signOut() //devuelve una promesa
-      .then(result => console.log(`${result.user.email} ha salido`))
-      .catch(error => console.log(`Ha ocurrido un error: ${error.code}:${error.message}`));
+  handleLogOut() {
+    firebase.auth().signOut()
+      .then(result => { console.log("Logout con exito") })
+      .catch(error => { console.log(`Error:  ${error.code} : ${error.message}`) })
+
   }
 
   renderLoginButton() {
-    //Comprueba si el usuario esta logeado
     if (this.state.user) {
       return (
         <div>
-          <img src={this.state.user.photoURL} alt={this.state.user.displayName}/>
-          <p>Hola {this.state.user.displayName} </p>
+          <img src={this.state.user.photoURL} alt={this.state.user.displayName} />
+          <p>{this.state.user.displayName}</p>
           <button onClick={this.handleLogOut}>Logout</button>
+          <FileUpload />
         </div>
-      );
-
+      )
     } else {
-      return (
-        <button onClick={this.handleAuth}>Log with google</button>
-      );
+      return (<button onClick={this.handleAuth}>Login with google</button>)
     }
   }
+
 
   render() {
     return (
